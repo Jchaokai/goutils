@@ -6,8 +6,8 @@ import (
 )
 
 type Tree struct {
-	Val interface{}
-	Left *Tree
+	Val   interface{}
+	Left  *Tree
 	Right *Tree
 	//节点数
 	Num int
@@ -15,25 +15,101 @@ type Tree struct {
 
 // 通过带有nil的 slice 创建 二叉树
 // s := []interface{}{1,2,3,4,5,nil,6}
-func NewBTree(slice []interface{}) *Tree{
-	current := &Tree{slice[0],nil,nil,len(slice)}
+func NewBTree(slice []interface{}) *Tree {
+	current := &Tree{slice[0], nil, nil, len(slice)}
 	root := current
-	for i:= 1 ; i < len(slice) ; i +=2 {
-			current.Left =  &Tree{slice[i],nil,nil,0}
-			current.Right = &Tree{slice[i+1],nil,nil,0}
-			current = current.Right
+	for i := 1; i < len(slice); i += 2 {
+		current.Left = &Tree{slice[i], nil, nil, 0}
+		current.Right = &Tree{slice[i+1], nil, nil, 0}
+		current = current.Right
 	}
 	return root
 }
 
+// bfs
+func bfs(root *Tree) {
+	s := make([]*Tree, 0)
+	if root != nil {
+		s = append(s, root)
+	}
+	for len(s) != 0 {
+		// pop
+		pop := s[0]
+		s = s[1:]
 
-func (t *Tree) String() string{
+		// TODO do something with node
+
+		if pop.Left != nil {
+			s = append(s, pop.Left)
+		}
+		if pop.Right != nil {
+			s = append(s, pop.Right)
+		}
+	}
+}
+
+func bfsWithNil(root *Tree) {
+	s := make([]*Tree, 0)
+	if root != nil {
+		s = append(s, root)
+	}
+	for len(s) != 0 {
+		// pop
+		pop := s[0]
+		s = s[1:]
+
+		if pop != nil {
+			// TODO do something with node
+		} else {
+			// TODO do something with nil node
+			continue
+		}
+
+		if pop.Left == nil && pop.Right == nil {
+			continue
+		}
+		s = append(s, pop.Left)
+		s = append(s, pop.Right)
+	}
+
+}
+
+// 遍历非nil节点
+func dfs(currentNode *Tree) {
+	if currentNode == nil {
+		return
+	}
+
+	// TODO do something with "current node"
+
+	if currentNode.Left != nil {
+		dfs(currentNode.Left)
+	}
+	if currentNode.Right != nil {
+		dfs(currentNode.Right)
+	}
+}
+
+// dfs遍历,包括非叶子节点外的nil节点
+func dfsWithNil(currentNode *Tree) {
+	if currentNode == nil {
+		// TODO do something with current "nil node"
+		return
+	}
+	// TODO do something with "currentNode"
+	// "currentNode"有一个非nil的子节点，再递归处理
+	if currentNode.Left != nil || currentNode.Right != nil {
+		dfsWithNil(currentNode.Left)
+		dfsWithNil(currentNode.Right)
+	}
+}
+func (t *Tree) String() string {
 	res := "Tree : \n"
 	//bfs + queue 遍历二叉树
 	q := queue.NewQueue(t.Num)
 	if t != nil {
 		q.Add(t)
-		res += fmt.Sprintf(" %v ",t.Val)
+		res += fmt.Sprintf(" %v ", t.Val)
 	}
 	for !q.IsNil() {
 		poptree := q.Pop().(*Tree)
@@ -43,22 +119,19 @@ func (t *Tree) String() string{
 		if poptree.Left != nil {
 			q.Add(poptree.Left)
 			if poptree.Left.Val != nil {
-				res +=fmt.Sprintf(" %v ",poptree.Left.Val)
-			}else{
+				res += fmt.Sprintf(" %v ", poptree.Left.Val)
+			} else {
 				res += " nil "
 			}
 		}
 		if poptree.Right != nil {
 			q.Add(poptree.Right)
 			if poptree.Right.Val != nil {
-				res += fmt.Sprintf(" %v ",poptree.Right.Val)
-			}else{
+				res += fmt.Sprintf(" %v ", poptree.Right.Val)
+			} else {
 				res += " nil "
 			}
 		}
 	}
 	return res
 }
-
-
-
