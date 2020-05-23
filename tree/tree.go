@@ -26,6 +26,42 @@ func NewBTree(slice []interface{}) *Tree {
 	return root
 }
 
+// 前序遍历
+func NLR(root *Tree) (res []interface{}) {
+	res = append(res, root.Val)
+	if root.Left != nil {
+		NLR(root.Left)
+	}
+	if root.Right != nil {
+		NLR(root.Right)
+	}
+	return
+}
+
+// 中序遍历
+func LNR(root *Tree) (res []interface{}) {
+	if root.Left != nil {
+		res = append(res, LNR(root.Left)...)
+	}
+	res = append(res, root.Val)
+	if root.Right != nil {
+		res = append(res, LNR(root.Right)...)
+	}
+	return
+}
+
+// 后续遍历
+func LRN(root *Tree) (res []interface{}) {
+	if root.Left != nil {
+		LRN(root.Left)
+	}
+	if root.Right != nil {
+		LRN(root.Right)
+	}
+	res = append(res, root.Val)
+	return
+}
+
 // bfs
 func bfs(root *Tree) {
 	s := make([]*Tree, 0)
@@ -48,6 +84,7 @@ func bfs(root *Tree) {
 	}
 }
 
+// bfs遍历,包括nil
 func bfsWithNil(root *Tree) {
 	s := make([]*Tree, 0)
 	if root != nil {
@@ -93,7 +130,7 @@ func dfs(currentNode *Tree) {
 // dfs遍历,包括非叶子节点外的nil节点
 func dfsWithNil(currentNode *Tree) {
 	if currentNode == nil {
-		// TODO do something with current "nil node"
+		// TODO do something with  "nil node"
 		return
 	}
 	// TODO do something with "currentNode"
