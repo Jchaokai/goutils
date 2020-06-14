@@ -30,10 +30,10 @@ func NewBTree(slice []interface{}) *Tree {
 func NLR(root *Tree) (res []interface{}) {
 	res = append(res, root.Val)
 	if root.Left != nil {
-		NLR(root.Left)
+		res = append(res,NLR(root.Left)...)
 	}
 	if root.Right != nil {
-		NLR(root.Right)
+		res = append(res,NLR(root.Right)...)
 	}
 	return
 }
@@ -53,10 +53,10 @@ func LNR(root *Tree) (res []interface{}) {
 // 后续遍历
 func LRN(root *Tree) (res []interface{}) {
 	if root.Left != nil {
-		LRN(root.Left)
+		res = append(res,LRN(root.Left)...)
 	}
 	if root.Right != nil {
-		LRN(root.Right)
+		res = append(res,LRN(root.Right)...)
 	}
 	res = append(res, root.Val)
 	return
