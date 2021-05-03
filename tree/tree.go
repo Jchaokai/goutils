@@ -30,10 +30,10 @@ func NewBTree(slice []interface{}) *Tree {
 func NLR(root *Tree) (res []interface{}) {
 	res = append(res, root.Val)
 	if root.Left != nil {
-		res = append(res,NLR(root.Left)...)
+		res = append(res, NLR(root.Left)...)
 	}
 	if root.Right != nil {
-		res = append(res,NLR(root.Right)...)
+		res = append(res, NLR(root.Right)...)
 	}
 	return
 }
@@ -53,14 +53,16 @@ func LNR(root *Tree) (res []interface{}) {
 // 后续遍历
 func LRN(root *Tree) (res []interface{}) {
 	if root.Left != nil {
-		res = append(res,LRN(root.Left)...)
+		res = append(res, LRN(root.Left)...)
 	}
 	if root.Right != nil {
-		res = append(res,LRN(root.Right)...)
+		res = append(res, LRN(root.Right)...)
 	}
 	res = append(res, root.Val)
 	return
 }
+
+// 层次遍历
 
 // bfs
 func bfs(root *Tree) {
@@ -111,7 +113,6 @@ func bfsWithNil(root *Tree) {
 
 }
 
-// 遍历非nil节点
 func dfs(currentNode *Tree) {
 	if currentNode == nil {
 		return
@@ -127,7 +128,7 @@ func dfs(currentNode *Tree) {
 	}
 }
 
-// dfs遍历,包括非叶子节点外的nil节点
+// dfs遍历,包括nil节点
 func dfsWithNil(currentNode *Tree) {
 	if currentNode == nil {
 		// TODO do something with  "nil node"
