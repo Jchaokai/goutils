@@ -2,7 +2,7 @@ package tree
 
 import (
 	"fmt"
-	"goutils/queue"
+	"goutils/ds/queue"
 )
 
 type Tree struct {

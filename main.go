@@ -1,18 +1,37 @@
 package main
 
-import "reflect"
+import "fmt"
 
-type s struct {
-	a string
-	b int
+type Bits uint8
+
+const (
+	F0 Bits = 1 << iota
+	F1
+	F2
+)
+
+func Set(b, flag Bits) Bits {
+	return b | flag
+}
+
+func Clear(b, flag Bits) Bits {
+	return b & (^flag)
+}
+
+func Toggle(b, flag Bits) Bits {
+	return b ^ flag
+}
+
+func Has(b, flag Bits) bool {
+	return b&flag != 0
 }
 
 func main() {
-	s := []s{
-		{"aa", 33},
-		{"cc", 11},
-		{"bb", 22},
+	var b Bits
+	b = Set(b, F0)
+	b = Toggle(b, F2)
+	for i, flag := range []Bits{F0, F1, F2} {
+		fmt.Println(i, Has(b, flag))
 	}
-	v := reflect.ValueOf(s[0]).Elem().Type()
-	println(v)
+
 }
