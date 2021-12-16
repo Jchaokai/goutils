@@ -1,37 +1,25 @@
 package main
 
-import "fmt"
-
-type Bits uint8
-
-const (
-	F0 Bits = 1 << iota
-	F1
-	F2
+import (
+	"fmt"
+	"math"
 )
 
-func Set(b, flag Bits) Bits {
-	return b | flag
-}
-
-func Clear(b, flag Bits) Bits {
-	return b & (^flag)
-}
-
-func Toggle(b, flag Bits) Bits {
-	return b ^ flag
-}
-
-func Has(b, flag Bits) bool {
-	return b&flag != 0
-}
-
 func main() {
-	var b Bits
-	b = Set(b, F0)
-	b = Toggle(b, F2)
-	for i, flag := range []Bits{F0, F1, F2} {
-		fmt.Println(i, Has(b, flag))
-	}
-
+	//var i uint = 1 << 63
+	//fmt.Printf("i : %064b \n",i)
+	//fmt.Printf("i : %064b \n",math.MaxInt)
+	////k := 64 - bits.LeadingZeros64(i)
+	////fmt.Printf("k: %d, pow2:%064b \n",k ,1 << uint(k))
+	//
+	//
+	//fmt.Printf("LeadingZeros64(%064b) = %d\n", 0, bits.LeadingZeros64(0))
+	//s := []int64{1,3,3,4,2,2,3}
+	//fmt.Println(len(s)," , ",cap(s))
+	//s = s[:2]
+	//fmt.Printf("%v ",s)
+	//fmt.Println(len(s)," , ",cap(s))
+	fmt.Println(math.Ceil(0.0001))
+	fmt.Println(uint32(math.MaxUint64 >> 32))
+	// 15625
 }
