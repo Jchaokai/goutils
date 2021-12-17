@@ -124,7 +124,7 @@ func (s *BitSet) Contains(n int) bool {
 		return false
 	}
 	i := n >> shift
-	if i > len(s.data) {
+	if i >= len(s.data) {
 		return false
 	}
 	return s.data[i]&(1<<uint(n&mask)) != 0
