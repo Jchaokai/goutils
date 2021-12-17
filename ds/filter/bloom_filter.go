@@ -5,6 +5,7 @@ package filter
 // so we can disable a lot of unnecessary request,such as keys the redis doesn't have at all
 
 import (
+	"github.com/Jchaokai/goutils/ds/set"
 	"hash/fnv"
 	"math"
 	"sync"
@@ -26,10 +27,10 @@ func optimalHashFuncSize(n uint, m uint) uint {
 }
 
 type BloomFilter struct {
-	k            uint     // the hash function number calculated by optimalHashFuncSize()
-	m            uint     // the bit map size calculated by optimalBitSize()
-	bits         []uint64 // uint64 used as 64 bits, we don't use []bitset,you can replace it
-	sync.RWMutex          // ensure thread safe
+	k            uint        // the hash function number calculated by optimalHashFuncSize()
+	m            uint        // the bit map size calculated by optimalBitSize()
+	bits         *set.BitSet // bit map
+	sync.RWMutex             // ensure thread safe
 }
 
 // NewBloomFilter return a *BloomFilter by expected element size and expected false-positive
@@ -37,20 +38,21 @@ type BloomFilter struct {
 // Example:
 //		bf := NewBloomFilter(1000000,0.0001)
 //
-func NewBloomFilter(n uint, p float64) (bf *BloomFilter) {
+func NewBloomFilter(n uint, p float64) *BloomFilter {
+	bf := &BloomFilter{}
 	bf.m = optimalBitSize(n, p)
-	bf.k = optimalHashFuncSize(n, uint(len(bf.bits)))
-	bf.bits = make([]uint64, (bf.m+63)/64)
+	bf.k = optimalHashFuncSize(n, bf.m)
+	bf.bits = set.NewBitSet()
 	if bf.k < 4 { // hash function minimum size is 4
 		bf.k = 4
 	}
-	return
+	return bf
 }
 
 func (bf *BloomFilter) hash(b []byte) uint64 {
 	hash64 := fnv.New64()
 	_, _ = hash64.Write(b)
-	return hash64.Sum64()
+	return hash64.Sum64() % uint64(bf.m)
 }
 
 func (bf *BloomFilter) Add(b []byte) {
@@ -58,7 +60,7 @@ func (bf *BloomFilter) Add(b []byte) {
 	defer bf.Unlock()
 	for i := 0; i < int(bf.k); i++ {
 		hashed := bf.hash(append(b, byte(i)))
-		bf.bits[hashed>>6] |= 1 << uint(hashed&(63))
+		bf.bits.Add(int(hashed))
 	}
 }
 
@@ -66,11 +68,18 @@ func (bf *BloomFilter) Add(b []byte) {
 func (bf *BloomFilter) Check(b []byte) bool {
 	bf.RLock()
 	defer bf.RUnlock()
-
-	return false
+	for i := 0; i < int(bf.k); i++ {
+		hashed := bf.hash(append(b, byte(i)))
+		if !bf.bits.Contains(int(hashed)) {
+			return false
+		}
+	}
+	return true
 }
 
 // FalsePositiveRate return the false-positive
 func (bf *BloomFilter) FalsePositiveRate() float64 {
+	//return math.Pow((1 - math.Exp(-float64(bf.k*bf.elementNum)/
+	//	float64(bf.m))), float64(bf.k))
 	return 0
 }
