@@ -2,7 +2,7 @@ package tree
 
 import (
 	"fmt"
-	"goutils/ds/queue"
+	"github.com/Jchaokai/goutils/ds/queue"
 )
 
 type Tree struct {

@@ -27,7 +27,7 @@ func NewSkipList() *SkipList {
 	return &SkipList{1, NewNode(math.MinInt, nil, nil)}
 }
 
-func (s *SkipList) Search(target int) bool {
+func (s *SkipList) Contains(target int) bool {
 	cur := s.Head
 	for cur != nil {
 		for cur.next != nil && cur.next.val < target {
@@ -42,13 +42,14 @@ func (s *SkipList) Search(target int) bool {
 }
 
 func (s *SkipList) Add(val int) {
-	rlevel := 1
-	for rlevel <= s.level && (rand.Int31()&1 == 0) {
-		rlevel++
+	// 新建的val 需要在最上面几层添加
+	nlevel := 1
+	for nlevel <= s.level && rand.Int()&1 == 0 {
+		nlevel++
 	}
-	// 抛硬币确保是否需要新建level
-	if rlevel > s.level {
-		s.level = rlevel
+	// 是否新加level
+	if nlevel > s.level {
+		s.level = nlevel
 		s.Head = NewNode(val, nil, s.Head)
 	}
 	cur := s.Head
@@ -57,7 +58,7 @@ func (s *SkipList) Add(val int) {
 		for cur.next != nil && cur.next.val < val {
 			cur = cur.next
 		}
-		if l <= rlevel { //此时cur.next为空, 或 > val，新加节点
+		if l <= nlevel { //此时cur.next为空, 或 > val，新加节点
 			cur.next = NewNode(val, cur.next, nil)
 			if last != nil {
 				last.down = cur.next
@@ -71,7 +72,7 @@ func (s *SkipList) Add(val int) {
 func (s *SkipList) Delete(val int) bool {
 	cur := s.Head
 	seen := false
-	for l := s.level; l >= 1; l-- {
+	for cur != nil {
 		for cur.next != nil && cur.next.val < val {
 			cur = cur.next
 		}

@@ -11,11 +11,11 @@ func TestSkipListForDebug(t *testing.T) {
 	skiplist.Add(1)
 	skiplist.Add(2)
 	skiplist.Add(3)
-	if skiplist.Search(0) {
+	if skiplist.Contains(0) {
 		t.Fatal("no '0' but search success")
 	}
 	skiplist.Add(4)
-	if !skiplist.Search(1) {
+	if !skiplist.Contains(1) {
 		t.Fatal("do not search '1' but exists")
 	}
 	if skiplist.Delete(0) {
@@ -45,7 +45,7 @@ func TestSkipList(t *testing.T) {
 			skiplist.Add(num)
 			contrastSkiplist.Add(num)
 		case 1:
-			if skiplist.Search(num) != contrastSkiplist.Search(num) {
+			if skiplist.Contains(num) != contrastSkiplist.Contains(num) {
 				t.Fail()
 			}
 		case 2:
